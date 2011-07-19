@@ -1,0 +1,15 @@
+[core]
+	repositoryformatversion = 0
+	filemode = true
+	bare = false
+	logallrefupdates = true
+[remote "origin"]
+	url = git@github.com:tbhartman/abaqus2dyna.git
+	fetch = +refs/heads/*:refs/remotes/origin/*
+[submodule "console"]
+	url = git@github.com:tbhartman/console.git
+[submodule "fea"]
+	url = git@github.com:tbhartman/fea.git
+[gui]
+	wmstate = normal
+	geometry = 1280x972+1280+22 192 308
