@@ -1,4 +1,4 @@
-#!/usr/bin/python3 -i
+#!/usr/bin/python3
 
 # Copyright 2011 Tim Hartman <tbhartman@gmail.com>
 # 
@@ -43,6 +43,39 @@ parser.add_argument('-v', '--version',
                     action='version',
                     version='%(prog)s ' + version)
 args = parser.parse_args()
+
+log = open(args.input[0].name)
+
+class Group(list):
+    write_out = False
+
+    def __init__(self, write_out):
+        self.write_out = write_out
+
+messages = {'Info':Group(False),
+            'Warning':Group(True),
+            'Error':Group(True)}
+
+error_re = re.compile('^\!')
+line_re = re.compile('^l.[0-9]')
+
+current = None
+for line in log.readlines():
+    if error_re.search(line):
+        current = {}
+        current['message'] = line[2:].strip()
+        messages['Error'].append(current)
+    if line_re.search(line) and 'line' not in current:
+        split = line.split(' ')
+        current['line'] = int(split[0][2:])
+
+head_fmt = '{:<12s}{:5d} messages found\n'
+line_fmt = '{:>12s} {:s}\n'
+for i in messages:
+    print(head_fmt.format(i,len(messages[i])), end='')
+    if messages[i].write_out:
+        for j in messages[i]:
+            print(line_fmt.format(('[' + str(j['line']) + ']'), j['message']),end='')
 
 
 if args.verbose:
