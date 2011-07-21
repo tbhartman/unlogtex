@@ -1,4 +1,4 @@
-#!/usr/bin/python3 -i
+#!/usr/bin/python3
 
 # Copyright 2011 Tim Hartman <tbhartman@gmail.com>
 # 
