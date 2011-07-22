@@ -29,7 +29,7 @@ terminal_width,_ = console.getTerminalSize()
 
 # argument parsing definitions
 
-parser = argparse.ArgumentParser(prog='sumpdftexlog',
+parser = argparse.ArgumentParser(prog='unlogtex',
                                  description='Summarize log of pdfTex')
 parser.add_argument('input',
                     metavar='INPUT',

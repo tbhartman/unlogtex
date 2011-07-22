@@ -1,8 +1,8 @@
-# LoTeX
+# unlogtex
 
 Summarize log of TeX
 
-Like logTeX but without the `g'.
+It undoes the mess of the log from TeX
 
 ## Introduction
 
