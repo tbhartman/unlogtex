@@ -349,7 +349,7 @@ for i in filenames:
 print('{:10s} {:5d} of {:5d} parsed files are local'.format('Files:',len(local_filenames),len(filenames)))
 if args.local:
     for i in local_filenames:
-        print(i)
+        print('    {:s}'.format(i))
 # graphics
 print('{:10s} {:5d} files used as graphics'.format('Graphics:',len(messages['Graphic'])))
 if args.graphics:
