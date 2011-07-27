@@ -372,7 +372,7 @@ if args.warnings:
                                               i['message']))
 
 #errors
-print('Errors found: {:5d}'.format(len(messages['Error'])))
+print('{:10s} {:5d} of {:5d} parsed'.format('Errors:',len(messages['Error']),total['Error']))
 for i in messages['Error']:
     print('{:6d}:{:23s}{:s}'.format(i['line'],
                                     i['filename'],
