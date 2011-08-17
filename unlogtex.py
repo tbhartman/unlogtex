@@ -265,6 +265,18 @@ def add_multiple_label(matchobj):
     messages['Warning'].append(new_warn)
     return ''
 
+def add_rerun_warning(matchobj):
+    string = matchobj.group(0)
+    split = string.split(':')
+    new_warn = {}
+    new_warn['line'] = None
+    new_warn['message'] = split[1].strip()
+    new_warn['filename'] = current_filename
+    new_warn['package'] = 'rerun'
+    messages['Warning'].append(new_warn)
+    return ''
+
+
 def get_messages(group):
     global current_filename
     #import pdb; pdb.set_trace()
@@ -294,6 +306,9 @@ def get_messages(group):
             # LaTeX version warning
             regex = '\nLaTeX Warning: You have requested, on input line [0-9]*, version\n(.|\n)*?is available.\n'
             string = re.sub(regex,add_version_warning,string)
+            # LaTeX rerun warning
+            regex = '\nPackage rerunfilecheck Warning: File `.*?\' has changed\.\n'
+            string = re.sub(regex,add_rerun_warning,string)
             #import pdb; pdb.set_trace()
             # the remaining need the string stripped
             string = re.sub('\n','',string)
