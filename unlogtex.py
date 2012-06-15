@@ -101,7 +101,6 @@ def get_groups(string, start='(', end=')'):
     groups.append([])
     string = string[(initial+1):]
     current_group = groups[-1]
-    #import pdb; pdb.set_trace()
     while len(string) > 0:
         left = re.search(start,string)
         right = re.search(end,string)
@@ -129,7 +128,7 @@ def get_groups(string, start='(', end=')'):
 
 groups = get_groups(log_data)
 
-def get_filename(string):
+def get_filename(string, tryharder=False):
     newline_split = string.split('\n')
     option_one = newline_split[0]
     #TODO  shouldn't look for if file exists on os...should just parse
@@ -142,7 +141,11 @@ def get_filename(string):
     if os.path.exists(option_one):
         return option_one
     else:
-        return False
+        if tryharder:
+            option_three = newline_split[-2].strip('*')
+            return option_three
+        else:
+            return False
 
 messages = {'Graphic':[],'Info':[],'Warning':[],'Error':[]}
 #messages['Info'] = len(re.findall('Info:',log_data))
@@ -214,27 +217,23 @@ def add_pdfTeX_warning(matchobj):
     return ''
 
 def add_generic_package_warning(matchobj):
-    string = matchobj.group(0)
-    warning = re.search(' Warning',string).span()
-    package = string[9:warning[0]]
-    split = string.split(' ')
-    line = int(split[-1][:-1])
-    new_warn = {}
-    new_warn['line'] = line
-    new_warn['message'] = ''
-    new_warn['filename'] = current_filename
-    new_warn['package'] = package
-    messages['Warning'].append(new_warn)
+    add_generic_class_warning(matchobj)
     return ''
 
 def add_generic_class_warning(matchobj):
     string = matchobj.group(0)
-    warning = re.search(' Warning: ',string).span()
-    package = string[7:warning[0]]
-    split = string.split(' ')
-    message = string[warning[1]:-1]
+    split = string.split(':')
+    split2 = split[0].split(' ')
+    package = ' '.join(split2[1:-1])
+    message = split[1].strip()
+    try:
+        line = int(message.split(' ')[-1][:-1])
+    except ValueError:
+        line = None
+    else:
+        message = ' '.join(message.split(' ')[:-4])
     new_warn = {}
-    new_warn['line'] = None
+    new_warn['line'] = line
     new_warn['message'] = message
     new_warn['filename'] = current_filename
     new_warn['package'] = package
@@ -279,7 +278,6 @@ def add_rerun_warning(matchobj):
 
 def get_messages(group):
     global current_filename
-    #import pdb; pdb.set_trace()
     for i in range(len(group)):
         if type(group[i]) is str:
             if i == 0 and get_filename(group[i]):
@@ -289,7 +287,8 @@ def get_messages(group):
             try:
                 current_filename = filename
             except:
-                pass
+                if i == 0:
+                    current_filename = get_filename(group[i],True)
             string = group[i]
             regex = '\n!(.|\n)*?\nl.[0-9]* .*?\n'
             string = re.sub(regex,add_error,string)
@@ -309,7 +308,6 @@ def get_messages(group):
             # LaTeX rerun warning
             regex = '\nPackage rerunfilecheck Warning: File `.*?\' has changed\.\n'
             string = re.sub(regex,add_rerun_warning,string)
-            #import pdb; pdb.set_trace()
             # the remaining need the string stripped
             string = re.sub('\n','',string)
             # graphic files
